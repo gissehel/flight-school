@@ -1,4 +1,6 @@
 #!/bin/bash
 
 set -e -x
-grep -v rc version
+pushd flight-school
+    grep -v rc version
+popd
