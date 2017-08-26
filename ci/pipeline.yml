@@ -94,3 +94,22 @@ jobs:
                 put: version
                 params:
                     bump: final
+    -
+        name: is release
+        serial_groups:
+            - version
+        plan:
+            -
+                get: flight-school
+                trigger : true
+                passed:
+                    - test-app
+            -   
+                task: tests
+                file: flight-school/ci/build.yml
+            - 
+                put: version
+                params:
+                    bump: patch
+                    pre: rc
+                
