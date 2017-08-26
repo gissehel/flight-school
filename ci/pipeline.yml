@@ -49,7 +49,7 @@ jobs:
         params: 
           pre: rc
       - task: build-artifact
-        file: flight-school/build.yml
+        file: flight-school/ci/build.yml
       - put: version
         params:
           file: version/number
