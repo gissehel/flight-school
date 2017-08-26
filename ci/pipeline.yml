@@ -1,57 +1,71 @@
 resources:
-  - name: flight-school
-    type: git
-    source:
-      uri: git@github.com:gissehel/flight-school.git
-      branch: master
-      private_key: ((fs-private-key))
-  - name: version
-    type: semver
-    source:
-      driver: git
-      uri: git@github.com:gissehel/flight-school.git
-      branch: version
-      file: version
-      private_key: ((fs-private-key))
+    - 
+        name: flight-school
+        type: git
+        source:
+            uri: git@github.com:gissehel/flight-school.git
+            branch: master
+            private_key: ((fs-private-key))
+    - 
+        name: version
+        type: semver
+        source:
+            driver: git
+            uri: git@github.com:gissehel/flight-school.git
+            branch: version
+            file: version
+            private_key: ((fs-private-key))
 
 jobs:
-  - name: test-app
-    plan:
-      - get: flight-school
-        trigger : true
-      - task: tests
-        file: flight-school/ci/build.yml
-  - name: minor
-    serial_groups: 
-      - version
-    plan:
-      - put: version
-        params: 
-          bump: minor
-          pre: rc
-  - name: major
-    serial_groups: 
-      - version
-    plan:
-      - put: version
-        params: 
-          bump: major
-          pre: rc
-  - name: build-rc
-    serial_groups: 
-      - version
-    plan:
-      - get: flight-school
-        trigger : true
-        passed: 
-          - test-app
-      - get: version
-        params: 
-          pre: rc
-      - task: build-artifact
-        file: flight-school/ci/build.yml
-      - put: version
-        params:
-          file: version/number
+    - 
+        name: test-app
+        plan:
+            - 
+                get: flight-school
+                trigger : true
+            -   
+                task: tests
+                file: flight-school/ci/build.yml
+    - 
+        name: minor
+        serial_groups: 
+            - version
+        plan:
+            - 
+                put: version
+                params: 
+                    bump: minor
+                    pre: rc
+    -
+        name: major
+        serial_groups: 
+            - version
+        plan:
+            - 
+                put: version
+                params: 
+                    bump: major
+                    pre: rc
+    - 
+        name: build-rc
+        serial_groups: 
+            - version
+        plan:
+            - 
+                get: flight-school
+                trigger : true
+                passed: 
+                    - test-app
+            - 
+                get: version
+                params: 
+                    pre: rc
+            - 
+                task: build-artifact
+                file: flight-school/ci/build.yml
+            - 
+                put: version
+                params:
+                    file: version/number
 
 
