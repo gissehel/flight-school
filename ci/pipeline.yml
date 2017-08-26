@@ -106,7 +106,7 @@ jobs:
                     - test-app
             -   
                 task: tests
-                file: flight-school/ci/build.yml
+                file: flight-school/ci/is_release.yml
             - 
                 put: version
                 params:
