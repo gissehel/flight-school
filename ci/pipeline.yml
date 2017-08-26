@@ -12,7 +12,7 @@ resources:
         source:
             driver: git
             uri: git@github.com:gissehel/flight-school.git
-            branch: version
+            branch: master
             file: version
             private_key: ((fs-private-key))
 
@@ -27,45 +27,70 @@ jobs:
                 task: tests
                 file: flight-school/ci/build.yml
     - 
+        name: patch
+        serial_groups:
+            - version
+        plan:
+            - 
+                get: flight-school
+                passed: 
+                    - test-app
+            - 
+                put: version
+                params:
+                    bump: patch
+                    pre: rc
+    - 
         name: minor
         serial_groups: 
             - version
         plan:
             - 
+                get: flight-school
+                passed: 
+                    - test-app
+            - 
                 put: version
                 params: 
                     bump: minor
                     pre: rc
-    -
+    - 
         name: major
         serial_groups: 
             - version
         plan:
+            - 
+                get: flight-school
+                passed: 
+                    - test-app
             - 
                 put: version
                 params: 
                     bump: major
                     pre: rc
     - 
-        name: build-rc
+        name: rc
         serial_groups: 
             - version
         plan:
             - 
                 get: flight-school
-                trigger : true
                 passed: 
                     - test-app
             - 
-                get: version
+                put: version
                 params: 
                     pre: rc
+    - 
+        name: relase
+        serial_groups:
+            - version
+        plan:
             - 
-                task: build-artifact
-                file: flight-school/ci/build.yml
-            - 
+                get: flight-school
+                passed:
+                    - test-app
+            -
                 put: version
                 params:
-                    file: version/number
-
-
+                    bump: final
